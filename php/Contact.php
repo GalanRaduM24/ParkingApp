@@ -1,5 +1,5 @@
 <?php
-    include "php/inc/header.php";
+    include "../php/inc/header.php";
 ?>
 <div class="container"> 
 <div class="col-md-12">
@@ -35,6 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo '</script>';
 }
 
-include "php/inc/footer.php";
+include "../php/inc/footer.php";
 
 ?>

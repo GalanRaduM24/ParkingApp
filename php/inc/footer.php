@@ -13,7 +13,7 @@
     
     
     
-    <script src="bootstrap-5.3.0-alpha3-dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/jquery-3.7.0.js"></script>
+    <script src="../bootstrap-5.3.0-alpha3-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/jquery-3.7.0.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
-    include "php/inc/header.php";
+    include "../php/inc/header.php";
 
-    require 'vendor/autoload.php';
+    require '../vendor/autoload.php';
 
     $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
     $dotenv->load();
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <div><br></div>
 <footer class="fixed-footer">
 <?php
-    include "php/inc/footer.php";
+    include "../php/inc/footer.php";
 
     $conn->close();
 ?>

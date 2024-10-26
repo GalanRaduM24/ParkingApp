@@ -1,9 +1,9 @@
 <?php
-include "php/inc/header.php";
+include "../php/inc/header.php";
 ?>
 <?php
 
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
 $dotenv->load();
@@ -177,5 +177,5 @@ if (isset($_GET['signout'])) {
 <div><br></div>
 <footer class="fixed-footer">
 <?php
-include "php/inc/footer.php";
+include "../php/inc/footer.php";
 ?>

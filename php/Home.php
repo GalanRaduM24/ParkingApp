@@ -1,5 +1,5 @@
 <?php
-    include "php/inc/header.php";
+    include "../php/inc/header.php";
 ?>
 
   <main>
@@ -7,7 +7,7 @@
       <h2>Home</h2>
       <div class="row">
         <div class="col-md-12">
-          <img class="parking-lot-image" src="images/parcare_ateneu.jpg" alt="Parking Lot 1" id="image">
+          <img class="parking-lot-image" src="../images/parcare_ateneu.jpg" alt="Parking Lot 1" id="image">
         </div>
       </div>
     </section>
@@ -45,7 +45,7 @@
           <div class="card-body">
             <h5 class="card-title">
               <div class="profile-picture">
-                <img src="images/profile1.jpg" alt="Profile Picture">
+                <img src="../images/profile1.jpg" alt="Profile Picture">
               </div>
               John Doe
             </h5>
@@ -58,7 +58,7 @@
           <div class="card-body">
             <h5 class="card-title">
               <div class="profile-picture">
-                <img src="images/profile2.jpg" alt="Profile Picture">
+                <img src="../images/profile2.jpg" alt="Profile Picture">
               </div>
               Jane Smith
             </h5>
@@ -71,7 +71,7 @@
           <div class="card-body">
             <h5 class="card-title">
               <div class="profile-picture">
-                <img src="images/profile3.jpg" alt="Profile Picture">
+                <img src="../images/profile3.jpg" alt="Profile Picture">
               </div>
               David Johnson
             </h5>
@@ -89,8 +89,8 @@
     let randomNumber;
 
     let randomImage = [
-      "images/parcare_ateneu.jpg",
-      "images/parcare_casa-poporului.jpg"
+      "../images/parcare_ateneu.jpg",
+      "../images/parcare_casa-poporului.jpg"
     ];
 
     function random() {
@@ -131,7 +131,7 @@
 <div><br></div>
 <footer>
 <?php
-    include "php/inc/footer.php";
+    include "../php/inc/footer.php";
 ?>
 
 

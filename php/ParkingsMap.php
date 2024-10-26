@@ -1,5 +1,5 @@
 <?php
-    include "php/inc/header.php";
+    include "../php/inc/header.php";
 ?>
 
 <div class="container">
@@ -10,7 +10,7 @@
             <iframe src="https://www.google.com/maps/d/u/0/embed?mid=13li0ENeuQ0ndby__SseVLDOdio-G_M0&ehbc=2E312F" width="940" height="680"></iframe>
     <?php
 
-    require 'vendor/autoload.php';
+    require '../vendor/autoload.php';
 
     $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
     $dotenv->load();
@@ -41,6 +41,6 @@
 <div><br></div>
 <footer>
 <?php
-    include "php/inc/footer.php";
+    include "../php/inc/footer.php";
     $conn->close();
 ?>
