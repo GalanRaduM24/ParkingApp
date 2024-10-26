@@ -1,0 +1,292 @@
+* {
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: montserrat;
+}
+
+header {
+    background: #5F9EA0;
+    height: 80px;
+    width: 100%;
+}
+
+label.logo {
+    color: aliceblue;
+    font-size: 35px;
+    line-height: 80px;
+    padding: 0 10px;
+    font-weight: bold;
+    float: left;
+}
+
+.header ul {
+    float: right;
+}
+
+.header ul li {
+    display: inline-block;
+    line-height: 80px;
+    margin: 0 10px;
+}
+
+.header ul li a {
+    color: white;
+    font-size: 17px;
+    padding: 7px 13px;
+    border-radius: 30px;
+    text-transform: capitalize;
+    transition: background-color 0.3s ease;
+}
+
+.header ul li a:hover {
+    background-color: #1E80FF;
+}
+
+
+
+
+.container{
+    justify-content: center;
+    align-items: center;
+}
+
+.col-md-12{
+    text-align: center;
+    color: #5F9EA0;
+}
+
+h2 {
+    font-size: 44px;
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 50%;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+button[type="submit"] {
+    background-color: #1E80FF;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+button[type="submit"]:focus,
+button[type="submit"]:hover {
+    background-color: #1E80FF;
+    opacity: 0.8;
+}
+
+.search-button {
+    background-color: #1E80FF;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.search-button:hover,
+.search-button:focus {
+    background-color: #0977D9;
+    outline: none;
+    box-shadow: 0 0 5px rgba(30, 128, 255, 0.5);
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.yes-button,
+.no-button {
+    background-color: #1E80FF;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.yes-button:hover,
+.yes-button:focus{
+    background-color: green;
+    outline: none;
+    box-shadow: 0 0 5px rgba(30, 128, 255, 0.5);
+}
+.no-button:hover,
+.no-button:focus{
+    background-color: red;
+    outline: none;
+    box-shadow: 0 0 5px rgba(30, 128, 255, 0.5);
+}
+
+
+footer {
+    background-color: #5F9EA0;
+    padding: 20px;
+    color: white;
+}
+
+.tail {
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+.row {
+    text-align: center;
+}
+
+hr {
+    border-color: white;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.footer-text {
+    font-weight: bold;
+    color: aliceblue;
+}
+
+.fixed-footer {
+  background-color: #5F9EA0;
+  padding: 20px 0;
+  color: aliceblue;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+main {
+  padding: 20px;
+}
+
+#parking-lots h2 {
+  color: #5F9EA0;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#app-description h2 {
+  color: #1E80FF;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#reviews h2 {
+  color: aquamarine;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.parking-lot-image {
+  width: 100%;
+  height: 750px; 
+  object-fit: cover;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.parking-lot-image.fade-out {
+  opacity: 0;
+}
+
+#app-description {
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #FFF;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#app-description .text-center {
+  margin-bottom: 30px;
+}
+
+#app-description .description-box {
+  border: 1px solid #CCC;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: aliceblue;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+#app-description .description-box:hover {
+  transform: scale(1.03);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#app-description .key-features-box {
+  text-align: right;
+}
+
+#app-description p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+#app-description ul {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+#app-description li {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #555;
+}    
+
+.card {
+  border-radius: 20px; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  overflow: hidden; 
+}
+
+.profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;      
+  background-color: #1E80FF;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+    
+.profile-picture img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.card-title {
+  display: flex;
+  align-items: center; 
+}
