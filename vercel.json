@@ -1,15 +1,18 @@
 {
     "version": 2,
-    "builds": [
-        {
-          "src": "api/**/*.php",
-          "use": "vercel-php@0.6.0" 
+    "functions": {
+        "api/*.php": {
+          "runtime": "vercel-php@0.6.0"
         }
-      ],
+      },
     "routes": [
       { "src": "/", "dest": "/php/Home.php" }, 
       { "src": "/css/(.*)", "dest": "/css/$1" }, 
       { "src": "/js/(.*)", "dest": "/js/$1" }    
-    ]
+    ],
+    "env": {
+        "DB_URL": "https://wnqxbxveijuckhtjrtws.supabase.co",
+        "DB_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InducXhieHZlaWp1Y2todGpydHdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk5NDUxNjMsImV4cCI6MjA0NTUyMTE2M30.v030Jkf_gSUCq0naDSGKwZ5sQOMsddo-oRZtql8X0y4"
+      }
   }
   
