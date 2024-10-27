@@ -17,11 +17,11 @@
                 </div>
                 <div class="col-md-6 text-end">
                     <ul class="nav">
-                        <li><a href="../php/Home.php">Home</a></li>
-                        <li><a href="../php/Profile.php">Profile</a></li>
-                        <li><a href="../php/ParkingsMap.php">ParkingsMap</a></li>
-                        <li><a href="../php/SearchParking.php">SearchParking</a></li>
-                        <li><a href="../php/Contact.php">Contact</a></li>
+                        <li><a href="../api/Home.php">Home</a></li>
+                        <li><a href="../api/Profile.php">Profile</a></li>
+                        <li><a href="../api/ParkingsMap.php">ParkingsMap</a></li>
+                        <li><a href="../api/SearchParking.php">SearchParking</a></li>
+                        <li><a href="../api/Contact.php">Contact</a></li>
                     </ul>
                 </div>
             </div>
