@@ -1,5 +1,5 @@
 <?php
-    include "../php/inc/header.php";
+    include "../api/inc/header.php";
 ?>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
@@ -38,5 +38,5 @@ if ($isLoggedIn) {
 <div><br></div>
 <footer>
 <?php
-    include "../php/inc/footer.php";
+    include "../api/inc/footer.php";
 ?>

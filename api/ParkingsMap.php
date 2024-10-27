@@ -1,5 +1,5 @@
 <?php
-include "../php/inc/header.php";
+include "../api/inc/header.php";
 ?>
 
 <div class="container">
@@ -53,5 +53,5 @@ include "../php/inc/header.php";
 <div><br></div>
 <footer>
 <?php
-include "../php/inc/footer.php";
+include "../api/inc/footer.php";
 ?>

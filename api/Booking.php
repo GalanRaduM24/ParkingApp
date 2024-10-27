@@ -1,5 +1,5 @@
 <?php
-include "../php/inc/header.php";
+include "../api/inc/header.php";
 
 require '../vendor/autoload.php';
 
@@ -112,5 +112,5 @@ try {
 <div><br></div>
 <footer class="fixed-footer">
 <?php
-include "../php/inc/footer.php";
+include "../api/inc/footer.php";
 ?>
