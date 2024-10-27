@@ -1,142 +1,147 @@
 <?php
-include "../php/inc/header.php";
+    include "../php/inc/header.php";
 ?>
 <?php
+    require '../vendor/autoload.php';
 
-require '../vendor/autoload.php';
+    // Load environment variables
+    $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
+    $dotenv->load();
 
-$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
-$dotenv->load();
+    use GuzzleHttp\Client;
 
-session_start();
+    session_start();
 
-// Check if the user is logged in or signed up
-$isLoggedIn = isset($_SESSION['username']);
+    // Check if the user is logged in or signed up
+    $isLoggedIn = isset($_SESSION['username']);
 
-// Process login form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['login'])) {
-        // Handle login form submission
+    // Supabase credentials from .env
+    $supabaseUrl = getenv('DB_URL');
+    $supabaseKey = getenv('DB_KEY');
 
-        // Assuming you have a database connection established
-        $host = getenv('DB_HOST');
-        $db = getenv('DB_NAME');
-        $user = getenv('DB_USER');
-        $password = getenv('DB_PASSWORD');
+    // Guzzle client setup
+    $client = new Client([
+        'base_uri' => $supabaseUrl,
+        'headers' => [
+            'apikey' => $supabaseKey,
+            'Authorization' => 'Bearer ' . $supabaseKey,
+            'Content-Type' => 'application/json',
+        ]
+    ]);
 
-        $conn = new mysqli($host, $user, $password, $db);
+    // Process login form submission
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['login'])) {
+            // Handle login form submission
 
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+            $username = $_POST['username'];
+            $password = $_POST['password'];
 
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+            try {
+                // Fetch user by username
+                $response = $client->request('GET', '/rest/v1/users', [
+                    'query' => [
+                        'user_name' => 'eq.' . $username,
+                        'select' => '*'
+                    ]
+                ]);
 
-        // Prepare and execute the query
-        $stmt = $conn->prepare("SELECT * FROM users WHERE user_name = ?"); // Updated column name
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
+                $data = json_decode($response->getBody(), true);
 
-        // Get the result
-        $result = $stmt->get_result();
+                if (count($data) === 1) {
+                    // User found, verify the password
+                    $row = $data[0];
+                    $hashed_password = $row['password'];
 
-        if ($result->num_rows === 1) {
-            // User found, verify the password
-            $row = $result->fetch_assoc();
-            $hashed_password = $row['password'];
+                    if (password_verify($password, $hashed_password)) {
+                        // Password is correct, set the session variables
+                        $_SESSION['username'] = $username;
+                        $_SESSION['email'] = $row['mail'];
 
-            if (password_verify($password, $hashed_password)) {
-                // Password is correct, set the session variables
-                $_SESSION['username'] = $username;
-                $_SESSION['email'] = $row['mail']; // Updated column name
-
-                // Redirect the user to their profile page or any other desired page
-                header("Location: profile.php");
-                exit();
-            } else {
-                // Password is incorrect
-                echo '<script>alert("Invalid username or password!");</script>';
+                        // Redirect the user to their profile page or any other desired page
+                        header("Location: profile.php");
+                        exit();
+                    } else {
+                        // Password is incorrect
+                        echo '<script>alert("Invalid username or password!");</script>';
+                    }
+                } else {
+                    // User not found
+                    echo '<script>alert("Invalid username or password!");</script>';
+                }
+            } catch (Exception $e) {
+                echo 'Error: ' . $e->getMessage();
             }
-        } else {
-            // User not found
-            echo '<script>alert("Invalid username or password!");</script>';
-        }
+        } elseif (isset($_POST['signup'])) {
+            // Handle signup form submission
 
-        $stmt->close();
-        $conn->close();
-    } elseif (isset($_POST['signup'])) {
-        // Handle signup form submission
+            $username = $_POST['username'];
+            $email = $_POST['email'];
+            $password = $_POST['password'];
 
-        // Assuming you have a database connection established
-        $host = 'localhost';
-        $db = 'parking'; // Updated database name
-        $user = 'root';
-        $password = 'root';
+            try {
+                // Check if the username or email already exists
+                $response = $client->request('GET', '/rest/v1/users', [
+                    'query' => [
+                        'or' => sprintf('(user_name.eq.%s,mail.eq.%s)', $username, $email),
+                        'select' => '*'
+                    ]
+                ]);
 
-        $conn = new mysqli($host, $user, $password, $db);
+                $data = json_decode($response->getBody(), true);
 
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+                if (count($data) > 0) {
+                    // User already exists
+                    echo '<script>alert("Username or email already exists!");</script>';
+                } else {
+                    // User does not exist, proceed with registration
 
-        $username = $_POST['username'];
-        $email = $_POST['email'];
-        $password = $_POST['password'];
+                    // Hash the password
+                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        // Prepare and execute the query to check if the username or email already exists
-        $stmt = $conn->prepare("SELECT * FROM users WHERE user_name = ? OR mail = ?"); // Updated column names
-        $stmt->bind_param("ss", $username, $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
+                    // Insert the user into Supabase
+                    $response = $client->request('POST', '/rest/v1/users', [
+                        'json' => [
+                            'user_name' => $username,
+                            'mail' => $email,
+                            'password' => $hashed_password,
+                        ]
+                    ]);
 
-        if ($result->num_rows > 0) {
-            // User already exists
-            echo '<script>alert("Username or email already exists!");</script>';
-        } else {
-            // User does not exist, proceed with registration
+                    if ($response->getStatusCode() === 201) {
+                        // Registration successful, set the session variables
+                        $_SESSION['username'] = $username;
+                        $_SESSION['email'] = $email;
 
-            // Hash the password
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-            // Insert the user into the database
-            $stmt = $conn->prepare("INSERT INTO users (user_name, mail, password) VALUES (?, ?, ?)"); // Updated column names
-            $stmt->bind_param("sss", $username, $email, $hashed_password);
-
-            if ($stmt->execute()) {
-                // Registration successful, set the session variables
-                $_SESSION['username'] = $username;
-                $_SESSION['email'] = $email;
-
-                // Redirect the user to their profile page or any other desired page
-                header("Location: profile.php");
-                exit();
-            } else {
-                // Registration failed
-                echo '<script>alert("Error during registration. Please try again.");</script>';
+                        // Redirect the user to their profile page or any other desired page
+                        header("Location: profile.php");
+                        exit();
+                    } else {
+                        // Registration failed
+                        echo '<script>alert("Error during registration. Please try again.");</script>';
+                    }
+                }
+            } catch (Exception $e) {
+                echo 'Error: ' . $e->getMessage();
             }
         }
-
-        $stmt->close();
-        $conn->close();
     }
-}
 ?>
 
 <?php
-// Check if the user is logged in or signed up
-$isLoggedIn = isset($_SESSION['username']);
+    // Check if the user is logged in or signed up
+    $isLoggedIn = isset($_SESSION['username']);
 
-// Process sign-out request
-if (isset($_GET['signout'])) {
-    // Clear the session variables
-    session_unset();
-    session_destroy();
+    // Process sign-out request
+    if (isset($_GET['signout'])) {
+        // Clear the session variables
+        session_unset();
+        session_destroy();
 
-    // Redirect the user to the login page or any other desired page
-    header("Location: profile.php");
-    exit();
-}
+        // Redirect the user to the login page or any other desired page
+        header("Location: profile.php");
+        exit();
+    }
 ?>
 
 <div class="container">

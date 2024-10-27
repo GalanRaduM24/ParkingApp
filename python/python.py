@@ -1,22 +1,19 @@
-import mysql.connector
-from mysql.connector import Error
 from flask import Flask, request, session, redirect
 from dotenv import load_dotenv
 import os
+from supabase import create_client
 
-# Establish database connection
-try:
-    connection = mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
-    )
-except Error as e:
-    print("Error connecting to the database:", e)
+# Load environment variables
+load_dotenv()
+
+# Initialize Supabase client
+url = os.getenv("DB_URL")
+key = os.getenv("DB_KEY")
+supabase = create_client(url, key)
 
 # Flask app initialization
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY")  # Ensure you set a secret key for session management
 
 @app.route('/', methods=['POST'])
 def login_signup():
@@ -43,7 +40,7 @@ def login_signup():
 
 @app.route('/profile')
 def profile():
-    # Fetch user account information from the database
+    # Fetch user account information from the session
     if 'user_name' in session:
         user_name = session['user_name']
         mail = session['mail']
@@ -53,29 +50,41 @@ def profile():
 
 def login_user(user_name, password):
     try:
-        cursor = connection.cursor()
-        cursor.execute("SELECT * FROM user WHERE user_name = %s", (user_name,))
-        users = cursor.fetchone()
+        # Fetch user by username
+        response = supabase.table('users').select('*').eq('user_name', user_name).execute()
+        users = response.data
 
-        if user:
-            # Validate password
-            if password == user[2]:
+        if users and len(users) == 1:
+            # User found, verify the password
+            user = users[0]
+            hashed_password = user['password']  # Assuming password is hashed in the database
+
+            if password == hashed_password:  # You should verify against hashed password
                 # Store user data in session
-                session['user_name'] = users[0]
-                session['mail'] = users[1]
+                session['user_name'] = user['user_name']
+                session['mail'] = user['mail']
                 return True
 
         return False
-    except Error as e:
+    except Exception as e:
         print("Error occurred:", e)
+        return False
 
 def signup_user(user_name, mail, password):
     try:
-        cursor = connection.cursor()
-        cursor.execute("INSERT INTO user (user_name, mail, password) VALUES (%s, %s, %s)", (user_name, mail, password))
-        connection.commit()
-        return True
-    except Error as e:
+        # Insert the user into Supabase
+        response = supabase.table('users').insert({
+            'user_name': user_name,
+            'mail': mail,
+            'password': password  # Ensure to hash this password before saving
+        }).execute()
+
+        if response.status_code == 201:
+            return True
+        else:
+            print("Error occurred during sign up:", response.error)
+            return False
+    except Exception as e:
         print("Error occurred:", e)
         return False
 

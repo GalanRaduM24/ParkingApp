@@ -1,4 +1,6 @@
-# Hellothere
+# ParkingApp
+
+
 
 ![alt text](https://github.com/GalanRaduM24/ParkingApp/blob/main/readmeImages/HomePage.png)
 ![alt text](https://github.com/GalanRaduM24/ParkingApp/blob/main/readmeImages/ParkingsMap.png)

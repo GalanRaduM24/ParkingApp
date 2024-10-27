@@ -1,96 +1,116 @@
 <?php
-    include "../php/inc/header.php";
+include "../php/inc/header.php";
 
-    require '../vendor/autoload.php';
+require '../vendor/autoload.php';
 
-    $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
-    $dotenv->load();
+// Load environment variables
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
+$dotenv->load();
 
-    $parkingSpotName = $_GET['name'];
+// Supabase credentials from .env
+$supabaseUrl = getenv('DB_URL');
+$supabaseKey = getenv('DB_KEY');
 
-    $host = getenv('DB_HOST');
-    $db = getenv('DB_NAME');
-    $user = getenv('DB_USER');
-    $password = getenv('DB_PASSWORD');
+// Create a Guzzle HTTP client
+$client = new GuzzleHttp\Client([
+    'base_uri' => $supabaseUrl,
+    'headers' => [
+        'apikey' => $supabaseKey,
+        'Authorization' => 'Bearer ' . $supabaseKey,
+        'Content-Type' => 'application/json',
+    ]
+]);
 
-    $conn = new mysqli($host, $user, $password, $db);
-
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+$parkingSpotName = $_GET['name'];
+$currentLocuri = 0;  // To hold the current locuri count
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Check if the form has been submitted
-    
     // Handle the booking confirmation
     if (isset($_POST['confirm'])) {
-        // Perform the database update
-        $updateSql = "UPDATE parkings SET locuri = locuri - 1 WHERE name = '$parkingSpotName'";
-        
-        if ($conn->query($updateSql) === TRUE) {
-            echo '<script>';
-            echo 'console.log("Booking confirmed for: ' . $parkingSpotName . '");';
-            echo '</script>';
-        } else {
-            echo "Error updating record: " . $conn->error;
+        // Fetch the current locuri value first
+        try {
+            $response = $client->request('GET', '/rest/v1/parkings?name=eq.' . $parkingSpotName);
+            $data = json_decode($response->getBody(), true);
+
+            if (!empty($data)) {
+                // Get the current number of available spots
+                $currentLocuri = $data[0]['locuri'];
+                
+                // Check if there are spots available to decrement
+                if ($currentLocuri > 0) {
+                    // Decrement available spots
+                    $newLocuri = $currentLocuri - 1;
+
+                    // Update the record in Supabase
+                    $updateResponse = $client->request('PATCH', '/rest/v1/parkings?name=eq.' . $parkingSpotName, [
+                        'json' => [
+                            'locuri' => $newLocuri
+                        ]
+                    ]);
+
+                    if ($updateResponse->getStatusCode() === 204) {
+                        echo '<script>';
+                        echo 'console.log("Booking confirmed for: ' . htmlspecialchars($parkingSpotName) . '");';
+                        echo '</script>';
+                    } else {
+                        echo "Error updating record: " . $updateResponse->getBody();
+                    }
+                } else {
+                    echo "No available spots to book.";
+                }
+            } else {
+                echo "No data available for the specified parking spot.";
+            }
+        } catch (Exception $e) {
+            echo 'Error: ' . $e->getMessage();
         }
     }
 }
-    
-?>
 
-<div class="container">
-   <div class="col-md-12">
-       <h1>Booking Page</h1>
-    <p>Are you booking for: <?php echo $parkingSpotName; ?></p>
-    
-        <form method="Post">   
-        <input type="hidden" name="parkingSpotName" value="<?php echo $parkingSpotName; ?>">
-        <button onclick="confirmBooking()" type="submit" name="confirm" class="yes-button">Yes</button>
-        <button onclick="cancelBooking()" type="submit" class="no-button">No</button>
-       </form>
+// Fetch parking spot details
+try {
+    $response = $client->request('GET', '/rest/v1/parkings?name=eq.' . $parkingSpotName);
+    $data = json_decode($response->getBody(), true);
 
-    <script>
-        function confirmBooking() {
-            // Add your logic here for handling the booking confirmation
-            alert("Booking confirmed for: <?php echo $parkingSpotName; ?>");
-            
-        }
-
-        function cancelBooking() {
-            // Add your logic here for handling the booking cancellation
-            alert("Cancel booking acction for: <?php echo $parkingSpotName; ?>");
-        }
-       </script>
-   
-    <?php
-       
-       echo "<br>";
-       
-        $sql = "SELECT * FROM parkings";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            // Output data of each row
-            while ($row = $result->fetch_assoc()) {
-                if($row["name"] === $parkingSpotName){
-                echo "Name: " . $row["name"] . "<br>";
-                echo "Locuri: " . $row["locuri"] . "<br>";
-                echo "<br>";
-                }
+    if (!empty($data)) {
+        // Display parking spot details
+        echo "<div class='container'>";
+        echo "<div class='col-md-12'>";
+        echo "<h1>Booking Page</h1>";
+        echo "<p>Are you booking for: " . htmlspecialchars($parkingSpotName) . "</p>";
+        echo "<form method='POST'>";   
+        echo "<input type='hidden' name='parkingSpotName' value='" . htmlspecialchars($parkingSpotName) . "'>";
+        echo "<button onclick='confirmBooking()' type='submit' name='confirm' class='yes-button'>Yes</button>";
+        echo "<button onclick='cancelBooking()' type='button' class='no-button'>No</button>";
+        echo "</form>";
+        
+        // JavaScript for alerts
+        echo "<script>
+            function confirmBooking() {
+                alert('Booking confirmed for: " . htmlspecialchars($parkingSpotName) . "');
             }
-        } else {
-            echo "No data available";
-        }
-    ?>
+            function cancelBooking() {
+                alert('Cancel booking action for: " . htmlspecialchars($parkingSpotName) . "');
+            }
+        </script>";
 
-    </div>    
-</div>
+        // Display parking spot details
+        foreach ($data as $row) {
+            echo "Name: " . htmlspecialchars($row["name"]) . "<br>";
+            echo "Locuri: " . htmlspecialchars($row["locuri"]) . "<br><br>";
+        }
+
+        echo "</div></div>";
+    } else {
+        echo "No data available";
+    }
+} catch (Exception $e) {
+    echo 'Error: ' . $e->getMessage();
+}
+?>
 
 <div><br></div>
 <footer class="fixed-footer">
 <?php
-    include "../php/inc/footer.php";
-
-    $conn->close();
+include "../php/inc/footer.php";
 ?>
