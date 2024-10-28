@@ -1,0 +1,11 @@
+# .htaccess file
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Redirect requests to index.php
+    RewriteRule ^index\.php$ - [L]
+    RewriteRule ^api/(.*)$ api/$1 [L]
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
