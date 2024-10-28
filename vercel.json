@@ -1,13 +1,10 @@
 {
     "version": 2,
-    "functions": {
-        "api/*.php": {
-          "runtime": "vercel-php@0.7.3"
-        }
-      },
-      "routes": [
-        { "src": "/(.*)",  "dest": "/api/Home.php" },
-        { "src": "/css/style.css", "dest": "/css/style.css" },
-        { "src": "/js/script.js", "dest": "/js/script.js" }]
-    }
+    "builds": [
+      {
+        "src": "Dockerfile",
+        "use": "@vercel/docker"
+      }
+    ]
+  }
   
